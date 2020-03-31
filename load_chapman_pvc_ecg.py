@@ -3,7 +3,9 @@
 """
 Created on Mon Mar 30 20:07:07 2020
 
-@author: scro3517
+@author: Dani Kiyasseh
+
+Load PVC-related ECG from Chapman-Ningbo Dataset
 """
 
 import os 
