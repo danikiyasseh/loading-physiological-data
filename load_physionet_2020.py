@@ -3,7 +3,7 @@
 """
 Created on Fri Feb 14 12:13:14 2020
 
-@author: scro3517
+@author: Dani Kiyasseh
 """
 import numpy as np
 import os
@@ -18,6 +18,15 @@ files = os.listdir(basepath)
 files = [file.split('.hea')[0] for file in files if '.hea' in file]
 
 def generate_inputs_and_outputs(leads_of_interest,samples_to_take,trial):
+    """ Create Input and Output Dicts 
+    Args:
+        leads_of_interest (list): ECG leads of interest
+        samples_to_take (int): number of samples in frame
+        trial (str): experiment trial
+    Outputs:
+    inputs (dict): dict with keys = patient number, values = frames
+    outputs (dict): dict with keys = patient number, values = labels
+    """
     inputs = dict()
     outputs = dict()
     all_labels = []
@@ -70,6 +79,12 @@ def obtain_samples_to_take(trial):
     return samples_to_take
 
 def encode_outputs(all_labels,outputs):
+    """ Encode Labels 
+    Args:
+        outputs (dict): labels dictionary with keys = patient number, values = labels
+    Output:
+        outputs (dict): encoded labels 
+    """
     unique_labels = np.unique(all_labels)
     unique_labels = [label for label in unique_labels if len(label)==1]
     
