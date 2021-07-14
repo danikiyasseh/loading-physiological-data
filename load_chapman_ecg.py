@@ -134,7 +134,7 @@ for modality in modality_list:
                         current_outputs.append(encoded_label)
                         current_pids.append(patient)
                     else:
-                        current_inputs.append(data_resampled)
+                        current_inputs.append(data_resampled) #might need to change to '.extend' instead of '.append' to end up with 2D matrix at the end. 
                         current_outputs.append([encoded_label for _ in range(data_resampled.shape[0])])
                         current_pids.append([patient for _ in range(data_resampled.shape[0])])
                     
