@@ -3,7 +3,7 @@
 """
 Created on Sat Mar 21 08:08:07 2020
 
-@author: Dani Kiyasseh
+@author: scro3517
 """
 
 import os
@@ -17,7 +17,7 @@ enc = LabelEncoder()
 #%%
 dataset = 'chapman'
 basepath = '/mnt/SecondaryHDD/chapman_ecg'
-trial = 'contrastive_msml' # '' | 'contrastive_ms' | 'contrastive_ml' | 'contrastive_msml' | 'contrastive_ss'
+trial = 'contrastive_ss' # '' | 'contrastive_ms' | 'contrastive_ml' | 'contrastive_msml' | 'contrastive_ss'
 
 files = os.listdir(os.path.join(basepath,'ECGDataDenoised'))
 database = pd.read_csv(os.path.join(basepath,'Diagnostics.csv'))
@@ -143,14 +143,32 @@ for modality in modality_list:
                 pids[modality][fraction][phase][term] = np.array(current_pids)
 
 #%%
-""" Remove Entries with NaNs - Appears to be Entire Rows """
-for phase in phases:
-    for term in terms:
-        good_indices = np.unique(np.where(~np.isnan(inputs_dict['ecg'][1][phase][term]))[0])
-        inputs_dict['ecg'][1][phase][term] = inputs_dict['ecg'][1][phase][term][good_indices]
-        outputs_dict['ecg'][1][phase][term] = outputs_dict['ecg'][1][phase][term][good_indices]
-        pids['ecg'][1][phase][term] = pids['ecg'][1][phase][term][good_indices]
+#""" Remove Entries with NaNs - Appears to be Entire Rows """
+#for phase in phases:
+#    for term in terms:
+#        good_indices = np.unique(np.where(~np.isnan(inputs_dict['ecg'][1][phase][term]))[0])
+#        inputs_dict['ecg'][1][phase][term] = inputs_dict['ecg'][1][phase][term][good_indices]
+#        outputs_dict['ecg'][1][phase][term] = outputs_dict['ecg'][1][phase][term][good_indices]
+#        pids['ecg'][1][phase][term] = pids['ecg'][1][phase][term][good_indices]
 
+#%%
+""" Less Computationally Intensive NaN Removal Process """
+#inputs_dict = inputs_dict
+#outputs_dict = outputs_dict
+#pids = pids
+bad_indices = dict()
+for phase in phases:
+    bad_indices[phase] = dict()
+    for term in terms:
+        bad_indices[phase][term] = []
+        for row,entry in enumerate(inputs_dict['ecg'][1][phase][term]):
+            if np.isnan(entry).sum() > 0:
+                bad_indices[phase][term].append(row)
+        """ Delete NaN Rows """
+        inputs_dict['ecg'][1][phase][term] = np.delete(inputs_dict['ecg'][1][phase][term],bad_indices[phase][term],0)
+        outputs_dict['ecg'][1][phase][term] = np.delete(outputs_dict['ecg'][1][phase][term],bad_indices[phase][term],0)
+        pids['ecg'][1][phase][term] = np.delete(pids['ecg'][1][phase][term],bad_indices[phase][term],0)
+        
 #%%
 def save_final_frames_and_labels(frames_dict,labels_dict,path,dataset):
     """ Save Frames and Labels Dicts """
